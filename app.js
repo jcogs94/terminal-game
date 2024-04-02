@@ -243,8 +243,26 @@ const game = () => {
         case 'atPort':
             displayStatus();
 
-            console.log('You are at port');
-            currentScene = 'end';
+            console.log(`After a long time at sea, ${gameData.shipName} returns safely to port.\n`);
+            console.log('What would you like to do?');
+            console.log('(A) Visit shipyard');
+            console.log('(B) Lay low at the Inn');
+            console.log('(C) Return to sea');
+            
+            let portChoice = userChoice(3, false);
+            switch (portChoice) {
+                case 'end':
+                    break;
+                case 'A':
+                    currentScene = 'shipyard';
+                    break;
+                case 'B':
+                    currentScene = 'inn';
+                    break;
+                case 'C':
+                    currentScene = 'atSea';
+                    break;
+            }
 
             break;
         case 'end':
