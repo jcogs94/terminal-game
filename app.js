@@ -232,14 +232,20 @@ const game = () => {
                     displayStatus();
                     continue;
                 }
-                else
+                else if (atSeaChoice === 'B') {
                     continueAtSea = false;
+                    currentScene = 'atPort';
+                    console.log(`You have decided to have the crew bring ${gameData.shipName} back to port to resupply.`);
+                }
             }
 
-            currentScene = 'end';
             break;
         case 'atPort':
             displayStatus();
+
+            console.log('You are at port');
+            currentScene = 'end';
+
             break;
         case 'end':
             gameRunning = false;
