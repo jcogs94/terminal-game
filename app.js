@@ -57,7 +57,7 @@ const displayStatus = () => {
     console.log(lineSeparator);
     console.log(gameData.shipName);
     console.log(`Location: ${gameData.shipLocation}`);
-    console.log(`Wanted Level: ${gameData.wantedLevel}`);
+    console.log(`Wanted Level: ${gameData.wantedLevel.toFixed(1)}`);
     console.log(`Health: ${gameData.shipHealth}`);
     console.log(`Attack Power: ${gameData.shipAttackPower}`);
     console.log(`Gold: ${gameData.crewGold}g`);
@@ -73,7 +73,7 @@ const merchantEvent = () => {
     console.log('You have encountered a merchant vessel.\n');
     console.log(`Merchant vessel:\nHealth: ${merchantVesselHealth}\nAttack: ${merchantVesselAttack}\n`);
 
-    while (merchantVesselHealth > 0) {
+    while (merchantVesselHealth > 0 && gameData.shipHealth > 0) {
         console.log('Would you like to:');
         console.log('(A) Attempt to board');
         console.log('(B) Fire at the vessel');
@@ -109,7 +109,60 @@ const merchantEvent = () => {
             else {
                 console.log(`\n${gameData.shipName} fires a volley at the merchant ship, leaving its health at ${merchantVesselHealth}.`);
                 gameData.shipHealth -= merchantVesselAttack;
-                console.log(`The merchant vessel fires back at ${gameData.shipName}, leaving its health at ${gameData.shipHealth}.\n`);
+
+                if (gameData.shipHealth <= 0) {
+                    currentScene = 'end';
+                    console.log(`The merchant vessel fires back at ${gameData.shipName}, causing it to sink.`);
+                    console.log(`\n>>> GAME OVER <<<`);
+                }
+                else
+                    console.log(`The merchant vessel fires back at ${gameData.shipName}, leaving its health at ${gameData.shipHealth}.\n`);
+            }
+        }
+    }
+}
+
+const royalNavyEvent = () => {
+    let navyVesselHealth = 40;
+    let navyVesselAttack = 10;
+
+    console.log('\nYou have encountered a royal navy vessel.\n');
+    console.log(`Navy vessel:\nHealth: ${navyVesselHealth}\nAttack: ${navyVesselAttack}\n`);
+
+    while (navyVesselHealth > 0 && gameData.shipHealth > 0) {
+        console.log('Would you like to:');
+        console.log('(A) Attempt to flee');
+        console.log('(B) Fire at the vessel');
+
+        let navyChoice = userChoice(2, false);
+        if (navyChoice === 'end')
+            return;
+        else if (navyChoice === 'A') {
+            displayStatus();
+            console.log('\nYour crew manages to leave the area without being spotted.\n');
+        }
+        else if (navyChoice === 'B') {
+            console.log('\nYou tell your crew to open fire on the navy vessel.');
+
+            navyVesselHealth -= gameData.shipAttackPower;
+            if (navyVesselHealth <= 0) {
+                gameData.wantedLevel += .25;
+
+                displayStatus();
+                console.log('The navy vessel sunk as a result of being fired upon.');
+                console.log('The crew is upset.\n');
+            }
+            else {
+                console.log(`\n${gameData.shipName} fires a volley at the navy ship, leaving its health at ${navyVesselHealth}.`);
+                gameData.shipHealth -= navyVesselAttack;
+
+                if (gameData.shipHealth <= 0) {
+                    currentScene = 'end';
+                    console.log(`The navy vessel fires back at ${gameData.shipName}, causing it to sink.`);
+                    console.log(`\n>>> GAME OVER <<<`);
+                }
+                else
+                    console.log(`The navy vessel fires back at ${gameData.shipName}, leaving its health at ${gameData.shipHealth}.\n`);
             }
         }
     }
@@ -158,7 +211,7 @@ const game = () => {
             while (continueAtSea) {
                 let shipEncountered = Math.random();
                 if (shipEncountered <= gameData.wantedLevel) {
-                    console.log('Royal Navy ship encountered.');
+                    royalNavyEvent();
                 }
                 else {
                     merchantEvent();
@@ -174,8 +227,10 @@ const game = () => {
                 let atSeaChoice = userChoice(2, false);
                 if (atSeaChoice === 'end')
                     break;
-                else if (atSeaChoice === 'A')
+                else if (atSeaChoice === 'A') {
+                    displayStatus();
                     continue;
+                }
                 else
                     continueAtSea = false;
             }
