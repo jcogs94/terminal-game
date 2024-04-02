@@ -1,16 +1,6 @@
 const prompt = require('prompt-sync')();
 let currentScene = 'init';
 
-// Validates user input to ensure they do not want to quit
-const validateInput = input => {
-    if (input.toLowerCase() === 'quit game' || input.toLowerCase() === 'quit') {
-        gameRunning = false;
-        return input;
-    }
-    else
-        return input;
-}
-
 const userChoice = (options, str) => {
     let userInput = '';
     
@@ -90,7 +80,7 @@ const game = () => {
             console.log('(A) Go out to sea.');
             console.log('(B) Dock at the port for supplies.\n');
             
-            let choiceStart = userChoice(2);
+            let choiceStart = userChoice(2, false);
 
             break;
         case 'end':
