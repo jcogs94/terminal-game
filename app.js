@@ -41,7 +41,8 @@ const gameData = {
     shipLocation: 'Off the coast of port',
     wantedLevel: 0,
     shipHealth: 30,
-    shipAttackPower: 5
+    shipAttackPower: 5,
+    crewGold: 20
 }
 
 // Displays important ship data
@@ -59,12 +60,14 @@ const displayStatus = () => {
     console.log(`Wanted Level: ${gameData.wantedLevel}`);
     console.log(`Health: ${gameData.shipHealth}`);
     console.log(`Attack Power: ${gameData.shipAttackPower}`);
+    console.log(`Gold: ${gameData.crewGold}g`);
     console.log(lineSeparator);
     console.log();
 }
 
 const merchantEvent = () => {
     let merchantVesselHealth = 15;
+    let merchantHealthInit = merchantVesselHealth;
     let merchantVesselAttack = 1;
 
     console.log('You have encountered a merchant vessel.\n');
@@ -79,7 +82,15 @@ const merchantEvent = () => {
         if (merchantChoice === 'end')
             return;
         else if (merchantChoice === 'A') {
-
+            if ((merchantVesselHealth / merchantHealthInit) <= .6) {
+                merchantVesselHealth = 0;
+                gameData.crewGold += 10;
+                console.log('\nThe merchant vessel was successfully boarded. You plundered 10 gold.');
+                console.log(`The crew of ${gameData.shipName} now has ${gameData.crewGold}g.\n`);
+            }
+            else {
+                console.log('\nThe crew of the merchant vessel resists and prevents the boarding attempt.\n');
+            }
         }
         else if (merchantChoice === 'B') {
             console.log('\nYou tell your crew to open fire on the merchant vessel.');
