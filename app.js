@@ -38,7 +38,10 @@ const userChoice = (options, str) => {
 // Data object for the game
 const gameData = {
     shipName: '',
-    shipLocation: 'Off the coast of port'
+    shipLocation: 'Off the coast of port',
+    wantedLevel: 0,
+    shipHealth: 30,
+    shipAttackPower: 5
 }
 
 // Displays important ship data
@@ -53,8 +56,46 @@ const displayStatus = () => {
     console.log(lineSeparator);
     console.log(gameData.shipName);
     console.log(`Location: ${gameData.shipLocation}`);
+    console.log(`Wanted Level: ${gameData.wantedLevel}`);
+    console.log(`Health: ${gameData.shipHealth}`);
+    console.log(`Attack Power: ${gameData.shipAttackPower}`);
     console.log(lineSeparator);
     console.log();
+}
+
+const merchantEvent = () => {
+    let merchantVesselHealth = 15;
+    let merchantVesselAttack = 1;
+
+    console.log('You have encountered a merchant vessel.\n');
+    console.log(`Merchant vessel:\nHealth: ${merchantVesselHealth}\nAttack: ${merchantVesselAttack}\n`);
+
+    while (merchantVesselHealth > 0) {
+        console.log('Would you like to:');
+        console.log('(A) Attempt to board');
+        console.log('(B) Fire at the vessel');
+
+        let merchantChoice = userChoice(2, false);
+        if (merchantChoice === 'end')
+            return;
+        else if (merchantChoice === 'A') {
+
+        }
+        else if (merchantChoice === 'B') {
+            console.log('\nYou tell your crew to open fire on the merchant vessel.');
+
+            merchantVesselHealth -= gameData.shipAttackPower;
+            if (merchantVesselHealth <= 0) {
+                console.log('The merchant vessel sunk as a result of being fired upon.');
+                console.log('The crew is upset.\n');
+            }
+            else {
+                console.log(`\n${gameData.shipName} fires a volley at the merchant ship, leaving its health at ${merchantVesselHealth}.`);
+                gameData.shipHealth -= merchantVesselAttack;
+                console.log(`The merchant vessel fires back at ${gameData.shipName}, leaving its health at ${gameData.shipHealth}.\n`);
+            }
+        }
+    }
 }
 
 // Game function
@@ -78,7 +119,7 @@ const game = () => {
             displayStatus();
             console.log('You are currently anchored off the coast of an island port. What do you instruct your crew to do?');
             console.log('(A) Go out to sea.');
-            console.log('(B) Dock at the port for supplies.\n');
+            console.log('(B) Dock at the port for supplies.');
             
             let choiceStart = userChoice(2, false);
 
@@ -94,8 +135,34 @@ const game = () => {
             break;
         case 'atSea':
             displayStatus();
-            console.log('You and your crew have returned to the open seas in search of a merchant ship to steal from.');
-            
+            console.log('You and your crew have returned to the open seas in search of a merchant ship to steal from...\n');
+
+            let continueAtSea = true;
+            while (continueAtSea) {
+                let shipEncountered = Math.random();
+                if (shipEncountered <= gameData.wantedLevel) {
+                    console.log('Royal Navy ship encountered.');
+                }
+                else {
+                    merchantEvent();
+                }
+
+                if (currentScene === 'end')
+                    break;
+
+                console.log('Would you like to continue looking for merchant ships at sea?');
+                console.log('(A) Yes');
+                console.log('(B) No');
+                
+                let atSeaChoice = userChoice(2, false);
+                if (atSeaChoice === 'end')
+                    break;
+                else if (atSeaChoice === 'A')
+                    continue;
+                else
+                    continueAtSea = false;
+            }
+
             currentScene = 'end';
             break;
         case 'atPort':
