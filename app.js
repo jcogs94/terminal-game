@@ -85,6 +85,9 @@ const merchantEvent = () => {
             if ((merchantVesselHealth / merchantHealthInit) <= .6) {
                 merchantVesselHealth = 0;
                 gameData.crewGold += 10;
+                gameData.wantedLevel += .1;
+
+                displayStatus();
                 console.log('\nThe merchant vessel was successfully boarded. You plundered 10 gold.');
                 console.log(`The crew of ${gameData.shipName} now has ${gameData.crewGold}g.\n`);
             }
@@ -97,6 +100,9 @@ const merchantEvent = () => {
 
             merchantVesselHealth -= gameData.shipAttackPower;
             if (merchantVesselHealth <= 0) {
+                gameData.wantedLevel += .1;
+
+                displayStatus();
                 console.log('The merchant vessel sunk as a result of being fired upon.');
                 console.log('The crew is upset.\n');
             }
