@@ -82,6 +82,24 @@ const game = () => {
             
             let choiceStart = userChoice(2, false);
 
+            if (choiceStart === 'A') {
+                gameData.shipLocation = 'Out at sea';
+                currentScene = 'atSea';
+            }
+            else if (choiceStart === 'B') {
+                gameData.shipLocation = 'Docked at port';
+                currentScene = 'atPort';
+            }
+
+            break;
+        case 'atSea':
+            displayStatus();
+            console.log('You and your crew have returned to the open seas in search of a merchant ship to steal from.');
+            
+            currentScene = 'end';
+            break;
+        case 'atPort':
+            displayStatus();
             break;
         case 'end':
             gameRunning = false;
