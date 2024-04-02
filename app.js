@@ -139,6 +139,7 @@ const royalNavyEvent = () => {
             return;
         else if (navyChoice === 'A') {
             displayStatus();
+            navyVesselHealth = 0;
             console.log('\nYour crew manages to leave the area without being spotted.\n');
         }
         else if (navyChoice === 'B') {
