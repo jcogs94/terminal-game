@@ -40,6 +40,7 @@ const gameData = {
     shipName: '',
     shipLocation: 'Off the coast of port',
     wantedLevel: 0,
+    shipMaxHealth: 30,
     shipHealth: 30,
     shipAttackPower: 5,
     crewGold: 20
@@ -58,7 +59,7 @@ const displayStatus = () => {
     console.log(gameData.shipName);
     console.log(`Location: ${gameData.shipLocation}`);
     console.log(`Wanted Level: ${gameData.wantedLevel.toFixed(1)}`);
-    console.log(`Health: ${gameData.shipHealth}`);
+    console.log(`Health: ${gameData.shipHealth}/${gameData.shipMaxHealth}`);
     console.log(`Attack Power: ${gameData.shipAttackPower}`);
     console.log(`Gold: ${gameData.crewGold}g`);
     console.log(lineSeparator);
@@ -264,6 +265,84 @@ const game = () => {
                     break;
             }
 
+            break;
+        case 'shipyard':
+            displayStatus();
+
+            let repairCost = Math.ceil((gameData.shipMaxHealth - gameData.shipHealth) / 5) * 1;
+
+            console.log('The shipyard worker welcomes you.');
+
+            let shopping = true;
+            let firstBuy = true;
+            while (shopping) {
+                if (firstBuy) {
+                    firstBuy = false;
+                    console.log('\n"What do you need?"');
+                }
+                else
+                    console.log('\n"Anything else for you?"');
+                
+                if (repairCost === 0)
+                    console.log(`(A) Repair ${gameData.shipName} - Unavailable, already at full health`);
+                else
+                    console.log(`(A) Repair ${gameData.shipName} - ${repairCost}g`);
+                
+                console.log(`(B) Upgrade cannons (+5 attack) - 10g`);
+                console.log(`(C) Upgrade hull (+5 health) - 10g`);
+                console.log(`(D) Return to port`);
+
+                let shipyardChoice = userChoice(4, false);
+                switch (shipyardChoice) {
+                    case 'end':
+                        shopping = false;
+                        break;
+                    case 'A':
+                        if (repairCost === 0)
+                            console.log(`\n"There's not anything else to repair! I could work on that hull if you'd like to upgrade it."`);
+                        else if (gameData.crewGold >= repairCost) {
+                            gameData.crewGold -= repairCost;
+                            gameData.shipHealth = gameData.shipMaxHealth;
+                            repairCost = 0;
+                            console.log(`\n${gameData.shipName} has been fully repaired.`);
+                            console.log(`Gold: ${gameData.crewGold}g`);
+                        }
+                        else {
+                            console.log(`\nThe crew does not have enough money to repair ${gameData.shipName}.\nCurrent Gold: ${gameData.crewGold}g`);
+                        }
+                        break;
+                    case 'B':
+                        if (gameData.crewGold >= 10) {
+                            gameData.crewGold -= 10;
+                            gameData.shipAttackPower += 5;
+                            console.log(`\nCannons upgraded.\nAttack now at: ${gameData.shipAttackPower}`);
+                            console.log(`Gold: ${gameData.crewGold}g`);
+                        }
+                        else {
+                            console.log(`\nThe crew does not have enough money to upgrade ${gameData.shipName}'s cannons.\nCurrent Gold: ${gameData.crewGold}g`);
+                        }
+                        break;
+                    case 'C':
+                        if (gameData.crewGold >= 10) {
+                            gameData.crewGold -= 10;
+                            gameData.shipMaxHealth += 5;
+                            gameData.shipHealth += 5;
+                            console.log(`\nHull upgraded.\nHealth: ${gameData.shipHealth}/${gameData.shipMaxHealth}`);
+                            console.log(`Gold: ${gameData.crewGold}g`);
+                        }
+                        else {
+                            console.log(`\nThe crew does not have enough money to upgrade ${gameData.shipName}'s hull.\nCurrent Gold: ${gameData.crewGold}g`);
+                        }
+                        break;
+                    case 'D':
+                        currentScene = 'atPort';
+                        shopping = false;
+                        break;
+                }
+            }
+
+            break;
+        case 'inn':
             break;
         case 'end':
             gameRunning = false;
