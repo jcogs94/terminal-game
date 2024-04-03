@@ -58,7 +58,7 @@ const displayStatus = () => {
     console.log(lineSeparator);
     console.log(gameData.shipName);
     console.log(`Location: ${gameData.shipLocation}`);
-    console.log(`Wanted Level: ${gameData.wantedLevel.toFixed(1)}`);
+    console.log('Wanted Level: ' + (gameData.wantedLevel.toFixed(1) * 10));
     console.log(`Health: ${gameData.shipHealth}/${gameData.shipMaxHealth}`);
     console.log(`Attack Power: ${gameData.shipAttackPower}`);
     console.log(`Gold: ${gameData.crewGold}g`);
@@ -343,6 +343,96 @@ const game = () => {
 
             break;
         case 'inn':
+            displayStatus();
+            
+            console.log('"Welcooome!" says the innkeeper.');
+            console.log("> Rest at the inn to 'lay low' and lower your wanted level.");
+            
+            let innkeeperDialogue = true;
+            while (innkeeperDialogue) {
+                let nightsUntilEmpty = Math.ceil(gameData.wantedLevel.toFixed(1) * 10);
+                let innPrice = 2;
+                let total = nightsUntilEmpty * innPrice;
+                
+                console.log('\n"Looking to stay the night? Or a few nights? We have plenty of room!"');
+                
+                let innChoice = '';
+                switch (nightsUntilEmpty) {
+                    case 0:
+                        console.log('(C) Leave inn');
+                        while (true) {
+                            innChoice = userChoice(3, false);
+                            if (innChoice === 'end')
+                                break;
+                            else if (innChoice !== 'C') {
+                                console.log('Invalid choice.');
+                                continue;
+                            }
+                            else
+                                break;
+                        }
+                        break;
+                    case 1:
+                        console.log(`(A) Spend one night - ${innPrice}g`);
+                        console.log('(C) Leave inn');
+                        while (true) {
+                            innChoice = userChoice(3, false);
+                            if (innChoice === 'end')
+                                break;
+                            else if (innChoice !== 'C' && innChoice !== 'A') {
+                                console.log('Invalid choice.');
+                                continue;
+                            }
+                            else
+                                break;
+                        }
+                        break;
+                    default:
+                        console.log(`(A) Spend one night - ${innPrice}g`);
+                        console.log(`(B) Spend ${nightsUntilEmpty} nights - ${total}g`);
+                        console.log('(C) Leave inn');
+                        innChoice = userChoice(3, false);
+                        break;
+                }
+
+                switch (innChoice) {
+                    case 'end':
+                        innkeeperDialogue = false;
+                        break;
+                    case 'A':
+                        if (gameData.crewGold >= innPrice) {
+                            gameData.wantedLevel -= .1;
+                            gameData.crewGold -= innPrice;
+                            console.log('\nThe crew feels more rested and the royal navy has become less interesting in finding you.');
+                            console.log('Wanted level: ' + Math.ceil(gameData.wantedLevel.toFixed(1) * 10));
+                            console.log(`Gold: ${gameData.crewGold}g`);
+                        }
+                        else {
+                            console.log(`\nThe crew of ${gameData.shipName} does not have enough gold to pay for a night at the inn.`);
+                            console.log(`Gold: ${gameData.crewGold}g`);
+                        }
+                        
+                        break;
+                    case 'B':
+                        if (gameData.crewGold >= total) {
+                            gameData.wantedLevel = 0;
+                            gameData.crewGold -= total;
+                            console.log('\nThe crew feels significantly more rested and the royal navy has stopped looking for you.');
+                            console.log('Wanted level: ' + Math.ceil(gameData.wantedLevel.toFixed(1) * 10));
+                            console.log(`Gold: ${gameData.crewGold}g`);
+                        }
+                        else {
+                            console.log(`\nThe crew of ${gameData.shipName} does not have enough gold to pay for ${nightsUntilEmpty} nights at the inn.`);
+                            console.log(`Gold: ${gameData.crewGold}g`);
+                        }
+                        
+                        break;
+                    case 'C':
+                        currentScene = 'atPort';
+                        innkeeperDialogue = false;
+                        break;
+                }
+            }
             break;
         case 'end':
             gameRunning = false;
