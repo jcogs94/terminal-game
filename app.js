@@ -1,3 +1,7 @@
+/*
+    Worked on this with Matthew B
+*/
+
 const prompt = require('prompt-sync')();
 let currentScene = 'init';
 
